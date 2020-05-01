@@ -19,5 +19,6 @@ Kelompok F02 (0099 &amp; 0142)
 
 Created by:
 
-[Rifki Aulia Irawan 142] (https://github.com/rifkiirawan)
-[Evelyn Tjitrodjojo 99] (https://github.com/marsellaeve)
+[Rifki Aulia Irawan 142](https://github.com/rifkiirawan)
+
+[Evelyn Tjitrodjojo 99](https://github.com/marsellaeve)
