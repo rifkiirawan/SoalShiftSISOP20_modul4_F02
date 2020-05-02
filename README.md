@@ -8,6 +8,106 @@ Kelompok F02 (0099 &amp; 0142)
 ### Source Code : [ssfs.c](https://github.com/rifkiirawan/SoalShiftSISOP20_modul4_F02/blob/master/ssfs.c)
 
 ## No 1 Program Enkripsi V1
+Pada no.1 diminta untuk mengenkripsi isi dari direktori dengan menggunakan metode caesar cipher dengan key = "9(ku@AW1[Lmvgax6q`5Y2Ry?+sF!^HKQiBXCUSe&0M.b%rI'7d)o4~VfZ*{#:}ETt$3J-zpc]lnh8,GwP_ND|jO" dengan key = 10. Jika sebuah direktori memiliki diberi nama "encv1_", maka isi dari direktori tersebut akan dienkripsi, dan jika direktori yang telah dienkripsi di-rename, maka direktori tersebut akan di dekripsi.
+Untuk pengimplementasian caesar cipher seperti berikut :
+```
+void encrypt(char *x)
+{
+    int xlength = strlen(x), xbegin = 0;
+    int i;
+    for (i = strlen(x); i >= 0; i--){
+        if (x[i] == '/'){
+            break;
+        }
+        if (x[i] == '.'){
+            xlength = i - 1;
+        }
+    }
+    for (int i = 1; i < xlength; i++){
+        if (x[i] == '/'){
+            xbegin = i;
+        }
+    }
+    int ind;
+    char *ptr;
+    for (i = xbegin; i < xlength; i++){
+        if (x[i] == '/'){
+            continue;
+        }
+        ptr = strchr(cipher, x[i]);
+        if (ptr){
+            ind = ptr - cipher;
+            x[i] = cipher[(ind + key) % strlen(cipher)];
+        }
+    }
+}
+
+void decrypt(char *y){
+    int ylength = strlen(y), ybegin = 0;
+    int i;
+    for (int i = 1; i < ylength; i++){
+        if (y[i] == '/' || y[i + 1] == '\0'){
+            ybegin = i + 1;
+            break;
+        }
+    }
+
+    for (int i = strlen(y); i >= 0; i--){
+        if (y[i] == '/'){
+            break;
+        }
+        if (y[i] == '.' && i == (strlen(y) - 1)){
+            ylength = strlen(y);
+            break;
+        }
+        if (y[i] == '.' && i != (strlen(y) - 1)){
+            ylength = i - 1;
+            break;
+        }
+    }
+    int ind;
+    char *ptr;
+    for (i = ybegin; i < ylength; i++){
+        if (y[i] == '/'){
+            continue;
+        }
+        ptr = strchr(cipher, y[i]);
+        if (ptr){
+            ind = ptr - cipher - key;
+            if (ind < 0){
+                ind = ind + strlen(cipher);
+            }
+            y[i] = cipher[ind];
+        }
+    }
+}
+```
+Dalam pengenkripsian, akan perlu memanggil fungsi `xmp_readdir`, seperti berikut ini :
+```
+    while ((de = readdir(dp)) != NULL){
+        struct stat st;
+        memset(&st, 0, sizeof(st));
+        st.st_ino = de->d_ino;
+        st.st_mode = de->d_type << 12;
+        if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0){
+            continue;
+        }
+        char temp[1000];
+        strcpy(temp, de->d_name);
+        if (strncmp(path, "/encv1_", 7) == 0){
+            encrypt(temp);
+        }
+        res = (filler(buf, temp, &st, 0));
+        if (res != 0)
+            break;
+    }
+```
+Setelah dilakukan enkripsi, perlu untuk melakukan dekripsi, akan dipanggil pada setiap fungsi fuse, pengimplementasiannya sebagai berikut :
+```
+if (strncmp(path, "/encv1_", 7) == 0){
+            decrypt(temp);
+        }
+```
 
 ## No 2 Program Enkripsi V2
 
